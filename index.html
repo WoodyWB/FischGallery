@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fisch Gallery 🐟</title>
+    <link rel="stylesheet" href="index.css">
+
+</head>
+
+<body>
+    <div class="hero">
+        <div class="navbar">
+            <h1 class="website-name">Fisch Gallery 🐟</h1>
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Search any kind of fish...">
+                <button onclick="searchFish()">Search</button>
+            </div>
+
+            <div class="settings-dropdown">
+                <button id="settings-btn" aria-haspopup="true" aria-expanded="false">⚙️ Settings</button>
+                <div class="dropdown-content" id="theme-options" role="menu" aria-label="Settings menu">
+                </div>
+            </div>
+            <div id="message-container"></div>
+            <button id="fav-btn">❤️ Favorites</button>
+        </div>
+
+    </div>
+    <div id="message-container"></div>
+
+    <p class="welcome">Search the underwater world!</p>
+
+
+    <div class="card-container" id="cards"></div>
+    <p id="no-result">No fish found!</p>
+
+    <script>
+        const fishData = [
+            { name: "Great White Shark", tags: "shark predator marine", img: "images/great white shark.png", status: "Vulnerable", type: "Saltwater" },
+            { name: "Hammerhead Shark", tags: "shark hammerhead marine", img: "images/hammerhead.png", status: "Threatened", type: "Saltwater" },
+            { name: "Catfish", img: "images/catfish.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Orca", img: "images/orca.png", status: "Vulnerable", type: "Saltwater" },
+            { name: "Humpback Dolphin", img: "images/atlantic humpback.png", status: "Critically Endangered", type: "Saltwater" },
+            { name: "Salmon", img: "images/salmon.png", status: "Declining", type: "Anadromous" },
+            { name: "Tiger Shark", tags: "shark tiger marine", img: "https://th.bing.com/th/id/OIP.K9Jw4Yl1qCqYeTRVJC6K6wHaE7?w=279&h=185&c=7&r=0&o=7&am", status: "Near Threatened", type: "Saltwater" },
+            { name: "Bull Shark", tags: "shark bull marine", img: "https://th.bing.com/th/id/R.d06d89c170b8b5f4636dd2d3f1f1816e?rik=JidUpU9sZ8mMAw&pid=ImgRaw&", status: "Near Threatened", type: "Saltwater" },
+            { name: "Lego Shark", tags: "Toy shark", img: "images/lego Shark.png", status: "Very bad", type: "tap water" },
+            { name: "Mako Shark", tags: "shark mako marine", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.fisheries.noaa.gov%2Fs3%2Fstyles%2F", status: "Endangered", type: "Saltwater" },
+            { name: "Whale Shark", tags: "shark whale marine", img: "https://th.bing.com/th/id/R.b63643ca8df55b3c47a1d449c31acd50?rik=9FYhJZI1tDvi7w&pid=ImgRaw&", status: "Endangered", type: "Saltwater" },
+            { name: "Thresher Shark", tags: "shark thresher marine", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.fisheries.noaa.gov%2Fs3%2Fstyles%2F", status: "Vulnerable", type: "Saltwater" },
+            { name: "Blue Whale", tags: "whale marine mammal", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.fisheries.noaa.gov%2Fstyles%2Fori", status: "Endangered", type: "Saltwater" },
+            { name: "Humpback Whale", tags: "whale marine mammal", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.fisheries.noaa.gov%2Fs3%2Fstyles%2F", status: "Vulnerable", type: "Saltwater" },
+            { name: "Sperm Whale", tags: "whale marine mammal", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.fisheries.noaa.gov%2Fs3%2Fstyles%2F", status: "Vulnerable", type: "Saltwater" },
+            { name: "Beluga Whale", tags: "whale marine mammal", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.fisheries.noaa.gov%2Fs3%2Fstyles%2F", status: "Near Threatened", type: "Saltwater" },
+            { name: "Narwhal", tags: "whale marine mammal", img: "", status: "Near Threatened", type: "Saltwater" },
+            { name: "Fin Whale", tags: "whale marine mammal", img: "", status: "Endangered", type: "Saltwater" },
+            { name: "Tiger Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Red Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Albino Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Lemon Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Calico Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Green Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Pearlscale Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Marble Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Blue Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Gold Oscar", tags: "oscar cichlid freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Black Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Dalmatian Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Sailfin Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Gold Dust Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Short-Finned Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Balloon Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "White Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Silver Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Green Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Lyretail Molly", tags: "molly livebearer freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Clownfish", tags: "clownfish marine popular", img: "images/clownfish.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Goldfish", tags: "goldfish freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Betta Fish", tags: "betta siamese fighting fish freshwater", img: "", status: "Common", type: "Freshwater" },
+            { name: "Guppy", tags: "guppy freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Angelfish", tags: "angelfish freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Neon Tetra", tags: "tetra freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Rainbowfish", tags: "rainbowfish freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Discus", tags: "discus freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Zebra Danio", tags: "danio freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Swordtail", tags: "swordtail freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Corydoras", tags: "cory catfish freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Plecostomus", tags: "pleco catfish freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Cardinal Tetra", tags: "tetra freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Rummy Nose Tetra", tags: "tetra freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Kuhli Loach", tags: "loach freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Gourami", tags: "gourami freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Endler’s Livebearer", tags: "livebearer freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Cherry Barb", tags: "barb freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Glass Catfish", tags: "glass catfish freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Tiger Barb", tags: "barb freshwater popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Arowana (Silver)", tags: "freshwater exotic arowana", img: "images/arowana_silver.png", status: "Vulnerable", type: "Freshwater" },
+            { name: "Arowana (Super Red)", tags: "freshwater exotic arowana", img: "images/arowana_red.png", status: "Vulnerable", type: "Freshwater" },
+            { name: "Discus (Blue)", tags: "freshwater exotic discus", img: "images/discus_blue.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Flowerhorn Cichlid", tags: "freshwater exotic cichlid", img: "images/flowerhorn.png", status: "Pending", type: "Freshwater" },
+            { name: "Clown Loach", tags: "freshwater exotic loach", img: "images/clown_loach.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Betta (Fancy)", tags: "freshwater exotic betta", img: "images/betta.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Golden Gourami", tags: "freshwater exotic gourami", img: "images/golden_gourami.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Rainbow Shark", tags: "freshwater exotic shark", img: "images/rainbow_shark.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Green Terror", tags: "freshwater exotic cichlid", img: "images/green_terror.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Pearl Gourami", tags: "freshwater exotic gourami", img: "images/pearl_gourami.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Mandarinfish", tags: "saltwater exotic mandarinfish", img: "images/mandarinfish.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Lionfish", tags: "saltwater exotic lionfish predator", img: "images/lionfish.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Clown Triggerfish", tags: "saltwater exotic triggerfish", img: "images/clown_triggerfish.png", status: "Vulnerable", type: "Saltwater" },
+            { name: "Moorish Idol", tags: "saltwater exotic moorish", img: "images/moorish_idol.png", status: "Endangered", type: "Saltwater" },
+            { name: "Banggai Cardinalfish", tags: "saltwater exotic cardinalfish", img: "images/banggai.png", status: "Endangered", type: "Saltwater" },
+            { name: "Blue Tang", tags: "saltwater exotic tang", img: "images/blue_tang.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Cleaner Wrasse", tags: "saltwater exotic wrasse", img: "images/cleaner_wrasse.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Royal Gramma", tags: "saltwater exotic gramma", img: "images/royal_gramma.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Flame Angelfish", tags: "saltwater exotic angelfish", img: "images/flame_angelfish.png", status: "Least Concern", type: "Saltwater" },
+            {
+                name: "Seahorse", tags: "saltwater exotic seahorse", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.fisheries.noaa.gov%2Fstyles%2Fori…", status: "Vulnerable", type: "Saltwater"
+            },
+            { name: "Leafy Sea Dragon", tags: "saltwater exotic seadragon", img: "images/leafy_seadragon.png", status: "Near Threatened", type: "Saltwater" },
+            { name: "Ribbon Eel", tags: "saltwater exotic eel", img: "images/ribbon_eel.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Glass Catfish", tags: "freshwater exotic catfish transparent", img: "images/glass_catfish.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Chocolate Gourami", tags: "freshwater exotic gourami", img: "images/chocolate_gourami.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Peacock Bass", tags: "freshwater exotic bass", img: "images/peacock_bass.png", status: "Least Concern", type: "Freshwater" },
+            { name: "Golden Puffer", tags: "saltwater exotic puffer", img: "images/golden_puffer.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Arowana Jade", tags: "freshwater exotic arowana", img: "images/arowana_jade.png", status: "Vulnerable", type: "Freshwater" },
+            { name: "Pufferfish", tags: "saltwater exotic puffer", img: "images/pufferfish.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Pipefish", tags: "saltwater exotic pipefish", img: "images/pipefish.png", status: "Least Concern", type: "Saltwater" },
+            { name: "Ribbonfish", tags: "saltwater exotic ribbonfish", img: "images/ribbonfish.png", status: "Least Concern", type: "Saltwater" },
+            { name: "King Salmon", tags: "salmon freshwater anadromous", img: "", status: "Least Concern", type: "Anadromous" },
+            { name: "Coho Salmon", tags: "salmon freshwater anadromous", img: "", status: "Least Concern", type: "Anadromous" },
+            { name: "Sockeye Salmon", tags: "salmon freshwater anadromous", img: "", status: "Least Concern", type: "Anadromous" },
+            { name: "Dwarf Gourami", tags: "freshwater exotic gourami", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Electric Blue Ram", tags: "freshwater exotic cichlid", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Discus (Red)", tags: "freshwater exotic discus", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Koi Butterfly", tags: "freshwater ornamental koi", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Platies", tags: "freshwater livebearer popular", img: "", status: "Common", type: "Freshwater" },
+            { name: "Cherry Shrimp", tags: "freshwater exotic invertebrate", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Butterflyfish", tags: "saltwater exotic reef", img: "", status: "Least Concern", type: "Saltwater" },
+            { name: "Damselfish", tags: "saltwater exotic reef", img: "", status: "Least Concern", type: "Saltwater" },
+            { name: "Angelfish (Marine)", tags: "saltwater exotic angelfish reef", img: "", status: "Least Concern", type: "Saltwater" },
+            { name: "Anthias", tags: "saltwater exotic reef", img: "", status: "Least Concern", type: "Saltwater" },
+            { name: "Mandarinfish (Green Variant)", tags: "saltwater exotic mandarinfish", img: "", status: "Least Concern", type: "Saltwater" },
+            { name: "Killer Whale (Transient)", tags: "whale orca marine", img: "", status: "Vulnerable", type: "Saltwater" },
+            { name: "Pygmy Sperm Whale", tags: "whale marine mammal", img: "", status: "Data Deficient", type: "Saltwater" },
+            { name: "Beaked Whale", tags: "whale marine mammal", img: "", status: "Data Deficient", type: "Saltwater" },
+            { name: "Bamboo Shark", tags: "shark reef marine", img: "", status: "Least Concern", type: "Saltwater" },
+            { name: "Wobbegong Shark", tags: "shark carpet marine", img: "", status: "Near Threatened", type: "Saltwater" },
+            { name: "Blacktip Reef Shark", tags: "shark reef marine", img: "", status: "Vulnerable", type: "Saltwater" },
+            { name: "Rainbow Shark (Red Fins)", tags: "freshwater exotic shark", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Oscar (Tuxedo)", tags: "oscar freshwater cichlid", img: "", status: "Common", type: "Freshwater" },
+            { name: "Angelfish (Pictus)", tags: "freshwater catfish popular", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Rosy Barb", tags: "barb freshwater popular", img: "", status: "Least Concern", type: "Freshwater" },
+            { name: "Rainbow Guppy", tags: "guppy freshwater popular", img: "", status: "Common", type: "Freshwater" }
+        ];
+
+
+
+
+        let favorites = [];
+        let showingFavorites = false;
+        /* card generato*/
+        function createCard(fish) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.setAttribute("data-tags", fish.tags || "");
+            card.innerHTML = `
+                <div class="big-card">
+                    <h3 class="fish-name">${fish.name}</h3>
+                    <p class="fish-type"><strong>Type:</strong> ${fish.type}</p>
+                    <p class="fish-status"><strong>Status:</strong> ${fish.status}</p>
+                    <p class="fish-extra"><strong>Note:</strong> Something interesting</p>
+                </div>
+                <div class="small-card">
+                    ${fish.img ? `<img src="${fish.img}" alt="${fish.name}">` : `<div class="img-placeholder">No image</div>`}
+                </div>
+                <div class="heart ${favorites.includes(fish.name) ? 'active' : ''}" onclick="toggleFavorite('${fish.name}', this)">❤️</div>
+            `;
+            document.getElementById("cards").appendChild(card);
+        }
+
+        function CardPlus() {
+            const cardsContainer = document.getElementById("cards");
+            cardsContainer.innerHTML = "";
+            const dataToShow = showingFavorites ? fishData.filter(f => favorites.includes(f.name)) : fishData;
+            dataToShow.forEach(fish => createCard(fish));
+            document.getElementById("no-result").style.display = dataToShow.length === 0 ? "block" : "none";
+        }
+
+
+        /*search for fish*/
+        function searchFish() {
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            const cards = document.querySelectorAll(".card");
+            let found = false;
+            cards.forEach(card => {
+                const tags = (card.getAttribute("data-tags") || "").toLowerCase();
+                const name = card.querySelector(".fish-name").innerText.toLowerCase();
+                if (tags.includes(searchTerm) || name.includes(searchTerm)) {
+                    card.style.display = "flex";
+                    found = true;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+            document.getElementById("no-result").style.display = found ? "none" : "block";
+        }
+
+        /*add for fav*/
+        function toggleFavorite(fishName, elem) {
+            const index = favorites.indexOf(fishName);
+            if (index === -1) {
+                favorites.push(fishName);
+                elem.classList.add("active");
+            } else {
+                favorites.splice(index, 1);
+                elem.classList.remove("active");
+            }
+        }
+
+        document.getElementById("fav-btn").addEventListener("click", () => {
+            showingFavorites = !showingFavorites;
+            CardPlus();
+            document.getElementById("fav-btn").textContent = showingFavorites ? "💙 All Fish" : "❤️ Favorites";
+        });
+
+        /*auto search*/
+        document.getElementById("search").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") searchFish();
+        });
+
+        /*press slahs to go to saerch bar*/
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "/" && e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+                e.preventDefault();
+                document.getElementById("search").focus();
+            }
+        });
+
+        /*theme dropdown thing*/
+        const themes = ["light", "dark", "ocean", "coral", "deepsea"];
+        const themeOptions = document.getElementById("theme-options");
+
+        themes.forEach(theme => {
+            const btn = document.createElement("button");
+            btn.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+            btn.onclick = () => { document.body.className = theme; };
+            themeOptions.appendChild(btn);
+        });
+
+        const settingsBtn = document.getElementById("settings-btn");
+        const dropdown = document.getElementById("theme-options");
+
+        settingsBtn.addEventListener("click", () => {
+            const isOpen = dropdown.style.display === "flex";
+            dropdown.style.display = isOpen ? "none" : "flex";
+            settingsBtn.setAttribute("aria-expanded", !isOpen);
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!settingsBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = "none";
+                settingsBtn.setAttribute("aria-expanded", false);
+            }
+        });
+
+        /*glowing every 5 seconds*/
+        setInterval(() => {
+            const fishNames = document.querySelectorAll(".fish-name");
+            fishNames.forEach(name => {
+                name.classList.add("glow");
+                setTimeout(() => name.classList.remove("glow"), 1000);
+            });
+        }, 5000);
+
+        CardPlus();
+
+        /*popping messages*/
+        const messages = [
+            "Pro woody isnt the imposter🌌",
+            "Remember to check out your favorites 🐟",
+            "Lighting Rod is overpowered ⚡",
+            "I want to play dead rails",
+            "wait wait wait WAIT WAIT WAITTT",
+            "Tung tung tung tung tung sahur",
+            "How do I become imposter without disconnecting",
+            "Grok? Why am I here.",
+            "Cool fish dad + cool fish doctor = tuff baby fish 🥀"
+        ];
+
+        /*timer thing*/
+        function showRandomMessage() {
+            const container = document.getElementById("message-container");
+            const msg = document.createElement("div");
+            msg.className = "message-popup";
+            msg.innerText = messages[Math.floor(Math.random() * messages.length)];
+            container.appendChild(msg);
+
+            setTimeout(() => {
+                container.removeChild(msg);
+            }, 7000);
+        }
+
+        setInterval(showRandomMessage, 10000);
+
+    </script>
+</body>
+
+</html>
